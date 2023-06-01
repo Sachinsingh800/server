@@ -71,10 +71,10 @@ const studentVerification=async(req,res)=>{
             if(dob==studentData.dob){
                res.status(200).send({message:"User verified  successfully",studentData})
             }else{
-               res.status(200).send({message:"your password is invalid"})
+               res.status(201).send({message:"user not found"})
             }
        }else{
-           res.status(200).send({message:"Your email dosen't exist"})
+           res.status(202).send({message:"user not found"})
        }
    }catch(error){
     res.status(400).send(error.message)
