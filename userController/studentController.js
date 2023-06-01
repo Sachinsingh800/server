@@ -69,7 +69,7 @@ const studentVerification=async(req,res)=>{
        if(studentData){
            
             if(dob==studentData.dob){
-               res.status(200).send({message:"User loged in successfully",studentData})
+               res.status(200).send({message:"User verified  successfully",studentData})
             }else{
                res.status(200).send({message:"your password is invalid"})
             }
