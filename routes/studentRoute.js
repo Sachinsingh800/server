@@ -32,4 +32,6 @@ const upload=multer({storage:storage})
 const studentController=require("../userController/studentController")
 student_route.post('/adminsionform',upload.single("image"),studentController.form)
 student_route.get('/getFrom',studentController.getFromData)
+student_route.post('/verification',studentController.studentVerification)
+
 module.exports=student_route

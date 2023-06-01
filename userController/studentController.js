@@ -57,7 +57,32 @@ const getFromData=async(req,res)=>{
             res.status(400).send({message:"Something wrong please check your internet"})
          }
 }
+
+
+const studentVerification=async(req,res)=>{
+   try{
+
+      const email=req.body.email
+       const dob=req.body.dob
+       const studentData=await Student.findOne({email:email})
+    
+       if(studentData){
+           
+            if(dob==studentData.dob){
+               res.status(200).send({message:"User loged in successfully",studentData})
+            }else{
+               res.status(200).send({message:"your password is invalid"})
+            }
+       }else{
+           res.status(200).send({message:"Your email dosen't exist"})
+       }
+   }catch(error){
+    res.status(400).send(error.message)
+   }
+ 
+}
 module.exports = {
   form,
-  getFromData
+  getFromData,
+  studentVerification
 };
