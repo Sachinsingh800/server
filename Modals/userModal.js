@@ -21,6 +21,13 @@ const userScheam=new mongoose.Schema({
   image:{
     type:String,
     required:true
+  },
+  verifyToken:{
+    type:String,
+  },
+  token:{
+    type:String,
+    default:""
   }
 })
 const User=new mongoose.model("User",userScheam)

@@ -1,5 +1,8 @@
 const User=require("../Modals/userModal")
 const bcrypt=require("bcrypt")
+const jwt = require("jsonwebtoken");
+const keysecret = "SECRET_KEY";
+const nodemailer=require("nodemailer")
 
 const securePassword = async (password) => {
     try {
@@ -9,6 +12,13 @@ const securePassword = async (password) => {
       console.log(error.message);
     }
   };
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "sachinsinghfunctionup@gmail.com",
+      pass: "oarajibxdjsrlaxt",
+    },
+  });
 const register=async(req,res)=>{
        const {name,email,mobile,password}=req.body
        const spassword = await securePassword(req.body.password);
@@ -50,7 +60,94 @@ const loginUser=async(req,res)=>{
     }
   
 }
+
+const sendPasswordLink = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(401).send({ message: "please enter your email" });
+  }
+  try {
+    const userFind = await User.findOne({ email: email });
+    const token = jwt.sign({ _id: userFind._id }, keysecret, {
+      expiresIn: "120s",
+    });
+    const setuserToken = await User.findByIdAndUpdate(
+      { _id: userFind._id },
+      {   verifyToken: token },
+      { new: true }
+    );
+    if (setuserToken) {
+      const mailOption = {
+        from: "sachinsinghfunctionup@gmail.com",
+        to: email,
+        subject: "Sending Email for password Reset",
+        text: `This link valid for 2 Minutes http://localhost:3000/forgotPassword/${userFind.id}/${setuserToken.  verifyToken}`,
+      };
+
+  transporter.sendMail(mailOption, (error, info) => {
+        if (error) {
+          console.log("error", error);
+          res.status(401).send({ message: "email" });
+        } else {
+          res.status(201).send({ message: "email send successfully" });
+        }
+      });
+    }
+  } catch (error) {
+    res.status(401).send({ message: "invalid user" });
+  }
+};
+const forgotPassword = async (req, res) => {
+  const { id, token } = req.params;
+
+  try {
+    const validuser = await User.findOne({ _id: id,   verifyToken: token });
+    const   verifyToken = jwt.verify(token, keysecret);
+      
+    if (validuser &&   verifyToken._id) {
+      res.status(201).send({ validuser });
+    } else {
+      res.status(401).send({ message: "User nod exist's" });
+    }
+  } catch (error) {
+    res.status(401).send({ message: "User nod exist's" });
+  }
+};
+const setPassword = async (req, res) => {
+  const { id, token } = req.params;
+  const { password } = req.body;
+  console.log(token);
+
+  try {
+    const validuser = await User.findOne({ _id: id,   verifyToken: token });
+    const   verifyToken = jwt.verify(token, keysecret);
+        
+    if (validuser &&   verifyToken._id) {
+      const newPassword = await bcrypt.hash(password, 10);
+      const setnewuserpass = await User.findByIdAndUpdate(
+        { _id: id },
+        { password: newPassword }
+      );
+      console.log(setnewuserpass);
+      await setnewuserpass.save();
+
+      res
+        .status(200)
+        .send({ message: "password updated successfully", setnewuserpass });
+    } else {
+      res.status(401).send({ message: "User nod exist's" });
+    }
+  } catch (error) {
+    res.status(401).send({ message: "hiii" });
+  }
+};
+
+
+
 module.exports={
     register,
-    loginUser
+    loginUser,
+    forgotPassword,
+    setPassword,
+    sendPasswordLink ,
 }
