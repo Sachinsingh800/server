@@ -1,65 +1,65 @@
-const User=require("../Modals/userModal")
-const bcrypt=require("bcrypt")
+const User = require("../Modals/userModal");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const keysecret = "SECRET_KEY";
-const nodemailer=require("nodemailer")
+const nodemailer = require("nodemailer");
 
 const securePassword = async (password) => {
-    try {
-      const passwordHash = await bcrypt.hash(password, 10);
-      return passwordHash;
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "sachinsinghfunctionup@gmail.com",
-      pass: "oarajibxdjsrlaxt",
-    },
-  });
-const register=async(req,res)=>{
-       const {name,email,mobile,password}=req.body
-       const spassword = await securePassword(req.body.password);
-   const userData=  await User.findOne({email})
-   if(userData){
-    res.status(200).send({message:"This email is already exist"})
-   }else{
-    const user=new User({
-        name,
-        email,
-        mobile,
-        password:spassword,
-        image:req.file.filename,
-   })
-    user.save()
-   res.status(200).send({message:"User Successfully register",user})
-}
-}
+  try {
+    const passwordHash = await bcrypt.hash(password, 10);
+    return passwordHash;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "vikesh.667kumar@gmail.com",
+    pass: "zdatdkbtpablrjeq",
+  },
+});
+const register = async (req, res) => {
+  const { name, email, mobile, password } = req.body;
+  const spassword = await securePassword(req.body.password);
+  const userData = await User.findOne({ email });
+  if (userData) {
+    res.status(200).send({ message: "This email is already exist" });
+  } else {
+    const user = new User({
+      name,
+      email,
+      mobile,
+      password: spassword,
+      image: req.file.filename,
+    });
+    user.save();
+    res.status(200).send({ message: "User Successfully register", user });
+  }
+};
 
-const loginUser=async(req,res)=>{
-    try{
+const loginUser = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    const userData = await User.findOne({ email: email });
 
-       const email=req.body.email
-        const password=req.body.password
-        const userData=await User.findOne({email:email})
-     
-        if(userData){
-            const passwordMatch=await bcrypt.compare(password,userData.password)
-             if(passwordMatch){
-                res.status(200).send({message:"User loged in successfully",userData})
-             }else{
-                res.status(200).send({message:"your password is invalid"})
-             }
-        }else{
-            res.status(200).send({message:"Your email dosen't exist"})
-        }
-    }catch(error){
-     res.status(400).send(error.message)
+    if (userData) {
+      const passwordMatch = await bcrypt.compare(password, userData.password);
+      if (passwordMatch) {
+        res
+          .status(200)
+          .send({ message: "User loged in successfully", userData });
+      } else {
+        res.status(200).send({ message: "your password is invalid" });
+      }
+    } else {
+      res.status(200).send({ message: "Your email dosen't exist" });
     }
-  
-}
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
 
 const sendPasswordLink = async (req, res) => {
   const { email } = req.body;
@@ -68,6 +68,7 @@ const sendPasswordLink = async (req, res) => {
   }
   try {
     const userFind = await User.findOne({ email: email });
+    
     const token = jwt.sign({ _id: userFind._id }, keysecret, {
       expiresIn: "120s",
     });
@@ -78,13 +79,13 @@ const sendPasswordLink = async (req, res) => {
     );
     if (setuserToken) {
       const mailOption = {
-        from: "sachinsinghfunctionup@gmail.com",
+        from: "vikesh.667kumar@gmail.com",
         to: email,
         subject: "Sending Email for password Reset",
         text: `This link valid for 2 Minutes http://localhost:3000/forgotPassword/${userFind.id}/${setuserToken.  verifyToken}`,
       };
 
-  transporter.sendMail(mailOption, (error, info) => {
+      transporter.sendMail(mailOption, (error, info) => {
         if (error) {
           console.log("error", error);
           res.status(401).send({ message: "email" });
@@ -97,6 +98,8 @@ const sendPasswordLink = async (req, res) => {
     res.status(401).send({ message: "invalid user" });
   }
 };
+
+
 const forgotPassword = async (req, res) => {
   const { id, token } = req.params;
 
@@ -142,12 +145,11 @@ const setPassword = async (req, res) => {
   }
 };
 
+module.exports = {
+  register,
+  loginUser,
+  sendPasswordLink,
+  forgotPassword,
+  setPassword,
 
-
-module.exports={
-    register,
-    loginUser,
-    forgotPassword,
-    setPassword,
-    sendPasswordLink ,
-}
+};
