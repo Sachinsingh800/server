@@ -82,7 +82,7 @@ const sendPasswordLink = async (req, res) => {
         from: "vikesh.667kumar@gmail.com",
         to: email,
         subject: "Sending Email for password Reset",
-        text: `This link valid for 2 Minutes http://localhost:3000/forgotPassword/${userFind.id}/${setuserToken.  verifyToken}`,
+        text: `This link valid for 2 Minutes https://computer-site-sachinsingh800.vercel.app/forgotPassword/${userFind.id}/${setuserToken.  verifyToken}`,
       };
 
       transporter.sendMail(mailOption, (error, info) => {
