@@ -7,7 +7,8 @@ app.use(express.json())
 mongoose.connect("mongodb+srv://sachinsinghgnc:VPHB1JEwU3U0gMkD@computer-site.vpqxzwp.mongodb.net/computer-site")
 
 const userRoute=require("./routes/userRoute")
-
+const adminRoute=require("./routes/adminRoute")
+app.use('/api',adminRoute)
 const studentRoute=require("./routes/studentRoute")
 app.use('/api',studentRoute)
 app.use('/api',userRoute)

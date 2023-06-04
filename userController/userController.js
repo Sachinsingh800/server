@@ -32,6 +32,7 @@ const register = async (req, res) => {
       mobile,
       password: spassword,
       image: req.file.filename,
+      is_admin:0
     });
     user.save();
     res.status(200).send({ message: "User Successfully register", user });

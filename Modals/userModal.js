@@ -28,7 +28,11 @@ const userScheam=new mongoose.Schema({
   token:{
     type:String,
     default:""
-  }
+  },
+  is_admin:{
+    type:Number,
+    required:true
+  },
 })
 const User=new mongoose.model("User",userScheam)
 module.exports=User
