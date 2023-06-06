@@ -33,5 +33,8 @@ const studentController=require("../userController/studentController")
 student_route.post('/adminsionform',upload.single("image"),studentController.form)
 student_route.get('/getFrom',studentController.getFromData)
 student_route.post('/verification',studentController.studentVerification)
+student_route.delete('/delete/:id',studentController.deleteData)
+student_route.get('/update/:id',studentController.getuser)
+student_route.put('/updatedata/:id',studentController.updateData)
 
 module.exports=student_route

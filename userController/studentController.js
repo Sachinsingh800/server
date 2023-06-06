@@ -81,8 +81,58 @@ const studentVerification=async(req,res)=>{
    }
  
 }
+
+
+const deleteData=async(req,res)=>{
+  try{
+    const result=await Student.deleteOne({_id:req.params.id})
+    if(result){
+      res.status(200).send({success:true,message:"delete successfully"})
+    }else{
+      res.status(201).send({success:false,message:"something went wrong"})
+    }
+  }catch(error){
+   console.log(error)
+  }
+
+}
+
+const getuser=async(req,res)=>{
+  try{
+    const result=await Student.findOne({_id:req.params.id})
+    if(result){
+      res.status(200).send({success:true,message:"user found successfully",result})
+    }else{
+      res.status(201).send({success:false,message:"record not found"})
+    }
+  }catch(error){
+   console.log(error)
+  }
+
+}
+
+const updateData=async(req,res)=>{
+  try{
+    const result=await Student.updateOne({_id:req.params.id},{$set:req.body})
+
+    if(result){
+      res.status(200).send({success:true,message:"Data update successfully",result})
+    }else{
+      res.status(201).send({success:false,message:"record not found"})
+    }
+  }catch(error){
+   console.log(error)
+  }
+
+}
+
+
 module.exports = {
   form,
   getFromData,
-  studentVerification
+  studentVerification,
+  deleteData,
+  getuser,
+  updateData,
+
 };
