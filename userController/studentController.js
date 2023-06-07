@@ -4,7 +4,6 @@ const form = async (req, res) => {
 
     try{
       const result=await cloudinary.uploader.upload(req.file.path)
-      console.log(result,"result")
        const name=req.body.name
        const email=req.body.email
        const image= req.file.filename
