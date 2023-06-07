@@ -1,7 +1,10 @@
 const Student = require("../Modals/studentModal");
+const cloudinary= require("../Utils/cloudinary")
 const form = async (req, res) => {
 
     try{
+      const result=await cloudinary.uploader.upload(req.file.path)
+      console.log(result,"result")
        const name=req.body.name
        const email=req.body.email
        const image= req.file.filename
@@ -23,7 +26,7 @@ const form = async (req, res) => {
                name,
                email,
                mobile,
-               image: req.file.filename,
+               image: result.url,
                gender,
                dob,
                fatherName,
@@ -134,5 +137,6 @@ module.exports = {
   deleteData,
   getuser,
   updateData,
+
 
 };
