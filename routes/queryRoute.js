@@ -9,6 +9,6 @@ query_route.use(express.urlencoded({extended:true}))
 const queryContoller=require("../userController/queryController")
 
 query_route.post("/query",queryContoller.usersQuery)
-query_route.get("/query",queryContoller.usersQuery)
+query_route.get("/querydata",queryContoller.getQueryData)
 
 module.exports=query_route
